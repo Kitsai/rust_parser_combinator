@@ -1,4 +1,4 @@
-use combinators::{map::map, pred::pred};
+use combinators::{bind::bind, map::map, pred::pred};
 
 pub type ParseResult<'a, Output> = Result<(&'a str, Output), &'a str>;
 
@@ -22,6 +22,17 @@ pub trait Parser<'a, Output> {
         F: Fn(&Output) -> bool + 'a,
     {
         BoxedParser::new(pred(self, pred_fn))
+    }
+
+    fn bind<F, NextParser, NewOutput>(self, f: F) -> BoxedParser<'a, NewOutput>
+    where
+        Self: Sized + 'a,
+        Output: 'a,
+        NewOutput: 'a,
+        NextParser: Parser<'a, NewOutput> + 'a,
+        F: Fn(Output) -> NextParser + 'a,
+    {
+       BoxedParser::new(bind(self, f))
     }
 }
 

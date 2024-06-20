@@ -125,3 +125,5 @@ fn single_element_parser() {
         single_element().parse("<div class=\"float\"/>")
     )
 }
+
+mod final_test;
